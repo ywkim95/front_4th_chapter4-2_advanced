@@ -33,6 +33,7 @@ import { parseSchedule } from "./utils.ts";
 import axios from "axios";
 import { DAY_LABELS } from "./constants.ts";
 import SearchTableRow from "./SearchTableRow.tsx";
+import SearchCheckboxGroup from "./SearchCheckboxGroup.tsx";
 
 interface Props {
   searchInfo: {
@@ -213,6 +214,20 @@ const SearchDialog = memo(({ searchInfo, onClose }: Props) => {
     [searchInfo, setSchedulesMap, onClose]
   );
 
+  const handleGradeChange = useCallback(
+    (values: (number | string)[]) => {
+      changeSearchOption("grades", values.map(Number));
+    },
+    [changeSearchOption]
+  );
+
+  const handleDayChange = useCallback(
+    (values: (number | string)[]) => {
+      changeSearchOption("days", values as string[]);
+    },
+    [changeSearchOption]
+  );
+
   useEffect(() => {
     const start = performance.now();
     console.log("API 호출 시작: ", start);
@@ -290,41 +305,25 @@ const SearchDialog = memo(({ searchInfo, onClose }: Props) => {
             </HStack>
 
             <HStack spacing={4}>
-              <FormControl>
-                <FormLabel>학년</FormLabel>
-                <CheckboxGroup
-                  value={searchOptions.grades}
-                  onChange={(value) =>
-                    changeSearchOption("grades", value.map(Number))
-                  }
-                >
-                  <HStack spacing={4}>
-                    {[1, 2, 3, 4].map((grade) => (
-                      <Checkbox key={grade} value={grade}>
-                        {grade}학년
-                      </Checkbox>
-                    ))}
-                  </HStack>
-                </CheckboxGroup>
-              </FormControl>
+              <SearchCheckboxGroup
+                label="학년"
+                values={searchOptions.grades}
+                options={[1, 2, 3, 4].map((grade) => ({
+                  value: grade,
+                  label: `${grade}학년`,
+                }))}
+                onChange={handleGradeChange}
+              />
 
-              <FormControl>
-                <FormLabel>요일</FormLabel>
-                <CheckboxGroup
-                  value={searchOptions.days}
-                  onChange={(value) =>
-                    changeSearchOption("days", value as string[])
-                  }
-                >
-                  <HStack spacing={4}>
-                    {DAY_LABELS.map((day) => (
-                      <Checkbox key={day} value={day}>
-                        {day}
-                      </Checkbox>
-                    ))}
-                  </HStack>
-                </CheckboxGroup>
-              </FormControl>
+              <SearchCheckboxGroup
+                label="요일"
+                values={searchOptions.days}
+                options={DAY_LABELS.map((day) => ({
+                  value: day,
+                  label: day,
+                }))}
+                onChange={handleDayChange}
+              />
             </HStack>
 
             <HStack spacing={4}>
