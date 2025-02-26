@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.firebase/
+public/index.html
+src/config.ts
+.firebaserc
+firebase.json
